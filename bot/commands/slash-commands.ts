@@ -1,21 +1,7 @@
-import { ApplicationCommandOptionType, REST, Routes } from "discord.js";
+import { REST, Routes } from "discord.js";
 import { dependencies } from "../dependencies";
+import { commands } from "./command-collection";
 import "dotenv/config";
-
-const commands = [
-  {
-    name: "throwing",
-    description: "Imagine throwing 🤣",
-    options: [
-      {
-        name: "person-throwing",
-        description: "The person who's throwing (it's Daco isn't it?)",
-        type: ApplicationCommandOptionType.User,
-        required: true,
-      },
-    ],
-  },
-];
 
 const rest = new REST().setToken(dependencies.discordToken);
 
