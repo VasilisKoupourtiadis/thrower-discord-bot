@@ -6,7 +6,15 @@ import {
   GatewayIntentBits,
   ActivityType,
   TextChannel,
+  User,
 } from "discord.js";
+
+const enum CommandNamesAndOptions {
+  Throwing = "throwing",
+  Check = "check",
+  ThrowingOptionName = "person-throwing",
+  CheckOptionName = "person-to-be-checked",
+}
 
 const client = new Client({
   intents: [
@@ -26,7 +34,7 @@ client.on("ready", (c) => {
   });
 });
 
-client.on("interactionCreate", (interaction) => {
+client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
   const channel = client.channels.cache.get(
@@ -35,21 +43,45 @@ client.on("interactionCreate", (interaction) => {
 
   const correctChannel = interaction.channel?.id === channel?.id;
 
-  const user = interaction.options.get("person-throwing")?.user;
+  let botReply: string = "";
 
-  const botReply = `<@${user?.id}> IS THROWING. THEY'RE TRASH`;
+  switch (interaction.commandName) {
+    case CommandNamesAndOptions.Throwing:
+      {
+        const userThrowing = interaction.options.get(
+          CommandNamesAndOptions.ThrowingOptionName
+        )?.user as User;
 
-  if (interaction.commandName === "throwing" && correctChannel) {
-    interaction.reply(botReply);
-  } else if (interaction.commandName === "throwing" && !correctChannel) {
-    channel.send({
-      content: botReply,
-    });
+        botReply = `<@${userThrowing.id}> IS THROWING. THEY'RE TRASH`;
 
-    interaction.reply({
-      content: "Commmand successfully registered",
-      ephemeral: true,
-    });
+        if (!correctChannel) {
+          await channel.send({
+            content: botReply,
+          });
+        }
+
+        await interaction.reply(botReply);
+      }
+      break;
+    case CommandNamesAndOptions.Check:
+      {
+        const userToBeChecked = interaction.options.get(
+          CommandNamesAndOptions.CheckOptionName
+        )?.user as User;
+
+        botReply = `<@${userToBeChecked.id}> has thrown 5 times`;
+
+        if (!correctChannel) {
+          await channel.send({
+            content: botReply,
+          });
+        }
+
+        await interaction.reply(botReply);
+      }
+      break;
+    default:
+      break;
   }
 });
 
