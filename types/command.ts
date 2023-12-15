@@ -1,4 +1,4 @@
-import { Options } from "discord.js";
+import { Options } from "../types/options";
 
 export type Command = {
   name: string;

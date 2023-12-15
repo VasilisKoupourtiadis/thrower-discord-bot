@@ -1,8 +1,8 @@
 import { ApplicationCommandOptionType } from "discord.js";
 
-export type options = {
+export type Options = {
   name: string;
-  descripttion: string;
+  description: string;
   type: ApplicationCommandOptionType;
   required: boolean;
 };
