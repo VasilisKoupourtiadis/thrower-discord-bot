@@ -26,4 +26,8 @@ export const commands: Command[] = [
       },
     ],
   },
+  {
+    name: "leaderboard",
+    description: "Get the top 3 worst throwers in the server",
+  },
 ];
