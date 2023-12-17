@@ -2,6 +2,7 @@ import "dotenv/config";
 import { dependencies } from "./dependencies";
 import mongoose from "mongoose";
 import { increaseThrowCounter } from "../database/increase-throw-counter";
+import { checkThrowCounter } from "../database/check-throw-counter";
 
 import {
   Client,
@@ -88,9 +89,20 @@ client.on("interactionCreate", async (interaction) => {
           CommandNamesAndOptions.CheckOptionName
         )?.user as User;
 
-        botReply = `<@${userToBeChecked.id}> has thrown 5 times`;
+        const throwCount = await checkThrowCounter(userToBeChecked);
 
-        if (!correctChannel) {
+        botReply = `<@${userToBeChecked.id}> has thrown ${throwCount}`;
+
+        if (throwCount === undefined || -1) {
+          botReply = "Sorry, could not get user";
+
+          await interaction.reply({
+            content: botReply,
+            ephemeral: true,
+          });
+
+          break;
+        } else if (!correctChannel) {
           await channel.send({
             content: botReply,
           });
