@@ -1,5 +1,6 @@
 import "dotenv/config";
 import { dependencies } from "./dependencies";
+import mongoose from "mongoose";
 
 import {
   Client,
@@ -26,6 +27,15 @@ const client = new Client({
     GatewayIntentBits.DirectMessages,
   ],
 });
+
+(async () => {
+  try {
+    await mongoose.connect(dependencies.connectionString);
+    console.log("Connected to database");
+  } catch (error) {
+    console.log("Could not connect to db" + error);
+  }
+})();
 
 client.on("ready", (c) => {
   console.log(`${c.user.username} is online`);

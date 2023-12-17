@@ -5,6 +5,7 @@ type Dependency = {
   guildId: string;
   clientId: string;
   channelId: string;
+  connectionString: string;
 };
 
 export const dependencies: Dependency = {
@@ -12,4 +13,5 @@ export const dependencies: Dependency = {
   guildId: process.env.GUILD_ID as string,
   clientId: process.env.CLIENT_ID as string,
   channelId: process.env.CHANNEL_ID as string,
+  connectionString: process.env.CONNECTION_STRING as string,
 };
