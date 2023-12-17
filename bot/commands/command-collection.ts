@@ -1,4 +1,4 @@
-import { Command } from "../../types/command";
+import { Command } from "../../models/command";
 import { ApplicationCommandOptionType } from "discord.js";
 
 export const commands: Command[] = [

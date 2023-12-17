@@ -1,4 +1,4 @@
-import { Options } from "../types/options";
+import { Options } from "../models/options";
 
 export type Command = {
   name: string;
