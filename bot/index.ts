@@ -3,6 +3,7 @@ import { dependencies } from "./dependencies";
 import mongoose from "mongoose";
 import { increaseThrowCounter } from "../database/increase-throw-counter";
 import { checkThrowCounter } from "../database/check-throw-counter";
+import { getLeaderboard } from "../database/get-leaderboard";
 
 import {
   Client,
@@ -91,9 +92,9 @@ client.on("interactionCreate", async (interaction) => {
 
         const throwCount = await checkThrowCounter(userToBeChecked);
 
-        botReply = `<@${userToBeChecked.id}> has thrown ${throwCount}`;
+        botReply = `<@${userToBeChecked.id}> has thrown ${throwCount} times`;
 
-        if (throwCount === undefined || -1) {
+        if (throwCount === -1) {
           botReply = "Sorry, could not get user";
 
           await interaction.reply({
@@ -127,13 +128,30 @@ client.on("interactionCreate", async (interaction) => {
           })
           .setDescription("Here are Consultopia's worst throwers")
           .setThumbnail("https://i.imgur.com/wer9sUY.gif")
-          .addFields(
-            { name: "1. Daco", value: "5k throws" },
-            { name: "2. Hugo", value: "4k throws" },
-            { name: "3. Sam", value: "2k throws" }
-          )
           .setImage("https://i.imgur.com/KHNxBqg.gif")
           .setTimestamp();
+
+        const leaderboard = await getLeaderboard();
+
+        embed.data.fields = [];
+
+        for await (let user of leaderboard) {
+          let rank = leaderboard.indexOf(user) + 1;
+
+          const discordName = await client.users.fetch(user.id);
+
+          embed.addFields({
+            name: `${rank}. ${discordName.displayName}`,
+            value: `${user.count} throws`,
+          });
+        }
+
+        if (leaderboard.length === 0) {
+          await interaction.reply({
+            content: "Sorry, could not get leaderboard information",
+            ephemeral: true,
+          });
+        }
 
         if (!correctChannel) {
           await channel.send({

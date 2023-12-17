@@ -14,6 +14,6 @@ export const checkThrowCounter = async (personThrowing: discordUser) => {
     return user.throwCount;
   } catch (error) {
     console.log("Error while trying to get throw count:" + error);
-    return undefined;
+    return -1;
   }
 };
