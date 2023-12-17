@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { dependencies } from "./dependencies";
 import mongoose from "mongoose";
+import { increaseThrowCounter } from "../database/increase-throw-counter";
 
 import {
   Client,
@@ -77,6 +78,8 @@ client.on("interactionCreate", async (interaction) => {
         } else {
           await interaction.reply(botReply);
         }
+
+        await increaseThrowCounter(userThrowing);
       }
       break;
     case CommandNamesAndOptions.Check:
