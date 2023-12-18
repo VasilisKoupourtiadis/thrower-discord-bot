@@ -1,5 +1,6 @@
 import { User } from "../models/user-schema";
 import { User as discordUser } from "discord.js";
+import { logger } from "../logger";
 
 export const checkThrowCounter = async (personThrowing: discordUser) => {
   const query = {
@@ -13,7 +14,7 @@ export const checkThrowCounter = async (personThrowing: discordUser) => {
 
     return user.throwCount;
   } catch (error) {
-    console.log("Error while trying to get throw count:" + error);
+    logger.error("While trying to get throw count:" + error);
     return -1;
   }
 };

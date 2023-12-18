@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { increaseThrowCounter } from "../database/increase-throw-counter";
 import { checkThrowCounter } from "../database/check-throw-counter";
 import { getLeaderboard } from "../database/get-leaderboard";
+import { logger } from "../logger";
 
 import {
   Client,
@@ -31,17 +32,28 @@ const client = new Client({
   ],
 });
 
+let logMessage: string = "";
+
 (async () => {
   try {
     await mongoose.connect(dependencies.connectionString);
-    console.log("Connected to database");
+    logMessage = "Connected to database";
+
+    console.log(logMessage);
+    logger.info(logMessage);
   } catch (error) {
-    console.log("Could not connect to db" + error);
+    logMessage = "Could not connect to db" + error;
+
+    console.log(logMessage);
+    logger.error(logMessage);
   }
 })();
 
 client.on("ready", (c) => {
-  console.log(`${c.user.username} is online`);
+  logMessage = `${c.user.username} is online`;
+
+  console.log(logMessage);
+  logger.info(logMessage);
 
   client.user?.setActivity({
     name: "Daco throw",

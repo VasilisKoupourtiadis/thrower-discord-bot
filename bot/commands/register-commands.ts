@@ -1,13 +1,13 @@
 import { REST, Routes } from "discord.js";
 import { dependencies } from "../dependencies";
 import { commands } from "./command-collection";
-import "dotenv/config";
+import { logger } from "../../logger";
 
 const rest = new REST().setToken(dependencies.discordToken);
 
 (async () => {
   try {
-    console.log("Registering commands");
+    logger.info("Registering commands");
 
     await rest.put(
       Routes.applicationGuildCommands(
@@ -17,8 +17,8 @@ const rest = new REST().setToken(dependencies.discordToken);
       { body: commands }
     );
 
-    console.log("Commands registered");
+    logger.info("Commands registered");
   } catch (error) {
-    console.log(error);
+    logger.error(`While registering commands ${error}`);
   }
 })();

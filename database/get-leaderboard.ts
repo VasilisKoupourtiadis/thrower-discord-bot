@@ -1,4 +1,5 @@
 import { User } from "../models/user-schema";
+import { logger } from "../logger";
 
 type internalUser = {
   id: string;
@@ -24,7 +25,7 @@ export const getLeaderboard = async () => {
 
     return sortedUsers;
   } catch (error) {
-    console.log("Error while trying to get users" + error);
+    logger.error("While trying to get users" + error);
     return users;
   }
 };

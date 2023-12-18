@@ -6,6 +6,7 @@ type Dependency = {
   clientId: string;
   channelId: string;
   connectionString: string;
+  logFile: string;
 };
 
 export const dependencies: Dependency = {
@@ -14,4 +15,5 @@ export const dependencies: Dependency = {
   clientId: process.env.CLIENT_ID as string,
   channelId: process.env.CHANNEL_ID as string,
   connectionString: process.env.CONNECTION_STRING as string,
+  logFile: process.env.LOG_FILE as string,
 };
