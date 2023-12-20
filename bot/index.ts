@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { increaseThrowCounter } from "../database/increase-throw-counter";
 import { checkThrowCounter } from "../database/check-throw-counter";
 import { getLeaderboard } from "../database/get-leaderboard";
+import { resetUserThrowCount } from "../database/reset-user-throw-count";
 import { registerCommands } from "./commands/register-commands";
 import { CommandNamesAndOptions, Channels } from "../enums/enums";
 import { logger } from "../logger";
@@ -184,6 +185,33 @@ client.on("interactionCreate", async (interaction) => {
         }
       }
       break;
+
+    case CommandNamesAndOptions.Reset: {
+      const userToReset = interaction.options.get(
+        CommandNamesAndOptions.UserToBeReset
+      )?.user as User;
+
+      const counterToReset = interaction.options.get(
+        CommandNamesAndOptions.CounterToReset
+      )?.value as string;
+
+      botReply = `Successfully reset ${userToReset.displayName}'s throw counter`;
+
+      if (!correctChannel) {
+        await interaction.reply({
+          content: "Sorry, you're not allowed to run commands in this channel",
+          ephemeral: true,
+        });
+
+        break;
+      }
+
+      await resetUserThrowCount(userToReset, counterToReset);
+      await interaction.reply({
+        content: botReply,
+        ephemeral: true,
+      });
+    }
     default:
       break;
   }
