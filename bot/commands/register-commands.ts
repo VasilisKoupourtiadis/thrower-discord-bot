@@ -5,20 +5,19 @@ import { logger } from "../../logger";
 
 const rest = new REST().setToken(dependencies.discordToken);
 
-(async () => {
+export const registerCommands = async (guildIds: string[]) => {
   try {
     logger.info("Registering commands");
 
-    await rest.put(
-      Routes.applicationGuildCommands(
-        dependencies.clientId,
-        dependencies.guildId
-      ),
-      { body: commands }
-    );
+    guildIds.forEach(async (guild) => {
+      await rest.put(
+        Routes.applicationGuildCommands(dependencies.clientId, guild),
+        { body: commands }
+      );
+    });
 
     logger.info("Commands registered");
   } catch (error) {
     logger.error(`While registering commands ${error}`);
   }
-})();
+};
