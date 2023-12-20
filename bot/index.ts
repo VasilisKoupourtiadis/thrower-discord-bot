@@ -90,9 +90,9 @@ client.on("interactionCreate", async (interaction) => {
           });
 
           break;
-        } else {
-          await interaction.reply(botReply);
         }
+
+        await interaction.reply(botReply);
 
         await increaseThrowCounter(userThrowing, counterToUpdate);
       }
@@ -103,31 +103,35 @@ client.on("interactionCreate", async (interaction) => {
           CommandNamesAndOptions.CheckOptionName
         )?.user as User;
 
-        const throwCount = await checkThrowCounter(userToBeChecked);
+        const counterToCheck = interaction.options.get(
+          CommandNamesAndOptions.CounterToCheck
+        )?.value as string;
 
-        botReply = `<@${userToBeChecked.id}> has thrown ${throwCount} times`;
+        const checkResult = await checkThrowCounter(
+          userToBeChecked,
+          counterToCheck
+        );
 
-        if (throwCount === -1) {
-          botReply = "Sorry, could not get user";
+        botReply =
+          checkResult.actionType === CommandNamesAndOptions.ThrowCount.valueOf()
+            ? `<@${userToBeChecked.id}> has thrown ${checkResult.count} time(s)`
+            : `<@${userToBeChecked.id}> has thrown ${checkResult.count} time(s) during this activity`;
 
-          await interaction.reply({
-            content: botReply,
-            ephemeral: true,
-          });
-
+        if (!correctChannel || checkResult.count === -1) {
+          checkResult.count === -1
+            ? await interaction.reply({
+                content: "Sorry, could not get user",
+                ephemeral: true,
+              })
+            : await interaction.reply({
+                content:
+                  "Sorry, you're not allowed to run commands in this channel",
+                ephemeral: true,
+              });
           break;
-        } else if (!correctChannel) {
-          await channel.send({
-            content: botReply,
-          });
-
-          await interaction.reply({
-            content: "Command successfully registered ✔",
-            ephemeral: true,
-          });
-        } else {
-          await interaction.reply(botReply);
         }
+
+        await interaction.reply(botReply);
       }
       break;
     case CommandNamesAndOptions.Leaderboard:

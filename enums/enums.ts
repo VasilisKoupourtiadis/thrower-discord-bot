@@ -2,6 +2,7 @@ export const enum CommandNamesAndOptions {
   Throwing = "throwing",
   ThrowingOptionName = "person-throwing",
   CounterToUpdate = "counter-to-update",
+  CounterToCheck = "counter-to-check",
   ThrowCount = "normal",
   RaidThrowCount = "raid",
   Check = "check",

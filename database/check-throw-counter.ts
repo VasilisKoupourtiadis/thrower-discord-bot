@@ -1,20 +1,39 @@
 import { User } from "../models/user-schema";
 import { User as discordUser } from "discord.js";
 import { logger } from "../logger";
+import { CommandNamesAndOptions } from "../enums/enums";
 
-export const checkThrowCounter = async (personThrowing: discordUser) => {
+type InternalResult = {
+  count: number;
+  actionType?: string;
+};
+
+export const checkThrowCounter = async (
+  personThrowing: discordUser,
+  action: string
+) => {
   const query = {
     userId: personThrowing.id,
   };
 
+  let result: InternalResult;
+
   try {
     const user = await User.findOne(query);
 
-    if (!user) return -1;
+    if (!user) return (result = { count: -1 });
 
-    return user.throwCount;
+    result = {
+      count:
+        action === CommandNamesAndOptions.ThrowCount.valueOf()
+          ? user.throwCount
+          : user.raidThrowCount,
+      actionType: action,
+    };
+
+    return result;
   } catch (error) {
     logger.error("While trying to get throw count:" + error);
-    return -1;
+    return (result = { count: -1 });
   }
 };
