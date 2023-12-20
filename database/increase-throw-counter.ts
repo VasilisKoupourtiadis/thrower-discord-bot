@@ -1,8 +1,12 @@
 import { User } from "../models/user-schema";
 import { User as discordUser } from "discord.js";
 import { logger } from "../logger";
+import { CommandNamesAndOptions } from "../enums/enums";
 
-export const increaseThrowCounter = async (personThrowing: discordUser) => {
+export const increaseThrowCounter = async (
+  personThrowing: discordUser,
+  action: string
+) => {
   const query = {
     userId: personThrowing.id,
   };
@@ -11,7 +15,9 @@ export const increaseThrowCounter = async (personThrowing: discordUser) => {
     const user = await User.findOne(query);
 
     if (user) {
-      user.throwCount++;
+      action === CommandNamesAndOptions.ThrowCount.valueOf()
+        ? user.throwCount++
+        : user.raidThrowCount++;
 
       await user.save().catch((error) => {
         logger.error("While trying to save changes to user:" + error);

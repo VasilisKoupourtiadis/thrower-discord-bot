@@ -4,6 +4,8 @@ import mongoose from "mongoose";
 import { increaseThrowCounter } from "../database/increase-throw-counter";
 import { checkThrowCounter } from "../database/check-throw-counter";
 import { getLeaderboard } from "../database/get-leaderboard";
+import { registerCommands } from "./commands/register-commands";
+import { CommandNamesAndOptions, Channels } from "../enums/enums";
 import { logger } from "../logger";
 
 import {
@@ -14,14 +16,6 @@ import {
   User,
   EmbedBuilder,
 } from "discord.js";
-
-const enum CommandNamesAndOptions {
-  Throwing = "throwing",
-  ThrowingOptionName = "person-throwing",
-  Check = "check",
-  CheckOptionName = "person-to-be-checked",
-  Leaderboard = "leaderboard",
-}
 
 const client = new Client({
   intents: [
@@ -49,11 +43,15 @@ let logMessage: string = "";
   }
 })();
 
-client.on("ready", (c) => {
+client.on("ready", async (c) => {
   logMessage = `${c.user.username} is online`;
 
   console.log(logMessage);
   logger.info(logMessage);
+
+  let guildIds = c.guilds.cache.map((guild) => guild.id);
+
+  registerCommands(guildIds);
 
   client.user?.setActivity({
     name: "Daco throw",
@@ -64,17 +62,20 @@ client.on("ready", (c) => {
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand()) return;
 
-  const channel = client.channels.cache.get(
-    dependencies.channelId
-  ) as TextChannel;
-
-  const correctChannel = interaction.channel?.id === channel?.id;
+  const channel = interaction.channel as TextChannel;
+  const correctChannel =
+    channel.name.toLowerCase().includes(Channels.Bot) ||
+    channel.name.toLowerCase().includes(Channels.Throw);
 
   let botReply: string = "";
 
   switch (interaction.commandName) {
     case CommandNamesAndOptions.Throwing:
       {
+        const counterToUpdate = interaction.options.get(
+          CommandNamesAndOptions.CounterToUpdate
+        )?.value as string;
+
         const userThrowing = interaction.options.get(
           CommandNamesAndOptions.ThrowingOptionName
         )?.user as User;
@@ -82,18 +83,18 @@ client.on("interactionCreate", async (interaction) => {
         botReply = `<@${userThrowing.id}> IS THROWING. THEY'RE TRASH`;
 
         if (!correctChannel) {
-          await channel.send({
-            content: botReply,
-          });
           await interaction.reply({
-            content: "Command successfully registered ✔",
+            content:
+              "Sorry, you're not allowed to run commands in this channel",
             ephemeral: true,
           });
+
+          break;
         } else {
           await interaction.reply(botReply);
         }
 
-        await increaseThrowCounter(userThrowing);
+        await increaseThrowCounter(userThrowing, counterToUpdate);
       }
       break;
     case CommandNamesAndOptions.Check:
