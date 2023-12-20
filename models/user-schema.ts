@@ -9,6 +9,10 @@ const userSchema = new Schema({
     type: Number,
     default: 0,
   },
+  raidThrowCount: {
+    type: Number,
+    default: 0,
+  },
 });
 
 export const User = model("User", userSchema);
