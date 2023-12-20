@@ -4,11 +4,11 @@ import { logger } from "../logger";
 import { CommandNamesAndOptions } from "../enums/enums";
 
 export const increaseThrowCounter = async (
-  personThrowing: discordUser,
+  userThrowing: discordUser,
   action: string
 ) => {
   const query = {
-    userId: personThrowing.id,
+    userId: userThrowing.id,
   };
 
   try {
@@ -25,7 +25,7 @@ export const increaseThrowCounter = async (
       });
     } else {
       const newUser = new User({
-        userId: personThrowing.id,
+        userId: userThrowing.id,
         throwCount: 1,
       });
 

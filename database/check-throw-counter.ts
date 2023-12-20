@@ -9,11 +9,11 @@ type InternalResult = {
 };
 
 export const checkThrowCounter = async (
-  personThrowing: discordUser,
+  userToCheck: discordUser,
   action: string
 ) => {
   const query = {
-    userId: personThrowing.id,
+    userId: userToCheck.id,
   };
 
   let result: InternalResult;

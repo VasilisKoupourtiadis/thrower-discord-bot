@@ -1,13 +1,16 @@
 export const enum CommandNamesAndOptions {
   Throwing = "throwing",
-  ThrowingOptionName = "person-throwing",
+  ThrowingOptionName = "user-throwing",
   CounterToUpdate = "counter-to-update",
-  CounterToCheck = "counter-to-check",
   ThrowCount = "normal",
   RaidThrowCount = "raid",
   Check = "check",
-  CheckOptionName = "person-to-be-checked",
+  CheckOptionName = "user-to-be-checked",
+  CounterToCheck = "counter-to-check",
   Leaderboard = "leaderboard",
+  Reset = "reset",
+  CounterToReset = "counter-to-reset",
+  UserToBeReset = "user-to-reset",
 }
 
 export const enum Channels {
