@@ -11,6 +11,7 @@ export const enum CommandNamesAndOptions {
   Reset = "reset",
   CounterToReset = "counter-to-reset",
   UserToBeReset = "user-to-reset",
+  ResetAll = "reset-all",
 }
 
 export const enum Channels {

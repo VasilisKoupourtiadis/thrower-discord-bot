@@ -90,4 +90,8 @@ export const commands: Command[] = [
       },
     ],
   },
+  {
+    name: "reset-all",
+    description: "Resets every users counter (raid and normal)",
+  },
 ];
