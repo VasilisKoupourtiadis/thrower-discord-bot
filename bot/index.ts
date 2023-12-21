@@ -118,17 +118,20 @@ client.on("interactionCreate", async (interaction) => {
             ? `<@${userToBeChecked.id}> has thrown ${checkResult.count} time(s)`
             : `<@${userToBeChecked.id}> has thrown ${checkResult.count} time(s) during this activity`;
 
-        if (!correctChannel || checkResult.count === -1) {
-          checkResult.count === -1
-            ? await interaction.reply({
-                content: "Sorry, could not get user",
-                ephemeral: true,
-              })
-            : await interaction.reply({
-                content:
-                  "Sorry, you're not allowed to run commands in this channel",
-                ephemeral: true,
-              });
+        if ((!correctChannel && checkResult.count === -1) || !correctChannel) {
+          await interaction.reply({
+            content:
+              "Sorry, you're not allowed to run commands in this channel",
+            ephemeral: true,
+          });
+
+          break;
+        } else if (correctChannel && checkResult.count === -1) {
+          await interaction.reply({
+            content: "Sorry, could not get user",
+            ephemeral: true,
+          });
+
           break;
         }
 
@@ -164,28 +167,26 @@ client.on("interactionCreate", async (interaction) => {
           });
         }
 
-        if (leaderboard.length === 0) {
+        if ((!correctChannel && leaderboard.length === 0) || !correctChannel) {
+          await interaction.reply({
+            content:
+              "Sorry, you're not allowed to run commands in this channel",
+            ephemeral: true,
+          });
+
+          break;
+        } else if (correctChannel && leaderboard.length === 0) {
           await interaction.reply({
             content: "Sorry, could not get leaderboard information",
             ephemeral: true,
           });
+
+          break;
         }
 
-        if (!correctChannel) {
-          await channel.send({
-            embeds: [embed],
-          });
-
-          await interaction.reply({
-            content: "Command successfully registered ✔",
-            ephemeral: true,
-          });
-        } else {
-          await interaction.reply({ embeds: [embed] });
-        }
+        await interaction.reply({ embeds: [embed] });
       }
       break;
-
     case CommandNamesAndOptions.Reset: {
       const userToReset = interaction.options.get(
         CommandNamesAndOptions.UserToBeReset
