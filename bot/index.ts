@@ -5,6 +5,7 @@ import { increaseThrowCounter } from "../database/increase-throw-counter";
 import { checkThrowCounter } from "../database/check-throw-counter";
 import { getLeaderboard } from "../database/get-leaderboard";
 import { resetUserThrowCount } from "../database/reset-user-throw-count";
+import { resetAllUserThrowCounters } from "../database/reset-all-user-throw-counters";
 import { registerCommands } from "./commands/register-commands";
 import { CommandNamesAndOptions, Channels } from "../enums/enums";
 import { logger } from "../logger";
@@ -16,6 +17,7 @@ import {
   TextChannel,
   User,
   EmbedBuilder,
+  GuildMember,
 } from "discord.js";
 
 const client = new Client({
@@ -196,7 +198,10 @@ client.on("interactionCreate", async (interaction) => {
         CommandNamesAndOptions.CounterToReset
       )?.value as string;
 
-      botReply = `Successfully reset ${userToReset.displayName}'s throw counter`;
+      botReply =
+        counterToReset === CommandNamesAndOptions.ThrowCount.valueOf()
+          ? `Successfully reset ${userToReset.displayName}'s throw counter`
+          : `Successfully reset ${userToReset.displayName}'s raid throw counter`;
 
       if (!correctChannel) {
         await interaction.reply({
@@ -213,7 +218,27 @@ client.on("interactionCreate", async (interaction) => {
         ephemeral: true,
       });
     }
+    case CommandNamesAndOptions.ResetAll: {
+      if (!correctChannel) {
+        await interaction.reply({
+          content: "Sorry, you're not allowed to run commands in this channel",
+          ephemeral: true,
+        });
+
+        break;
+      }
+
+      botReply = `Successfully reset all user throw counters`;
+
+      await resetAllUserThrowCounters();
+      await interaction.reply({
+        content: botReply,
+        ephemeral: true,
+      });
+    }
     default:
+      // const guildOwner = (await interaction.guild?.fetchOwner()) as GuildMember;
+      // console.log(guildOwner.user.id);
       break;
   }
 });
