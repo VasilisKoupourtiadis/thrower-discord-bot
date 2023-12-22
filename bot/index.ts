@@ -7,7 +7,10 @@ import { getLeaderboard } from "../database/get-leaderboard";
 import { resetUserThrowCount } from "../database/reset-user-throw-count";
 import { resetAllUserThrowCounters } from "../database/reset-all-user-throw-counters";
 import { registerCommands } from "./commands/register-commands";
+import { setGuildOwners } from "./functions/set-guild-owners";
+import { setSpecialGuildAdmins } from "./functions/set-special-guild-admins";
 import { CommandNamesAndOptions, Channels } from "../enums/enums";
+import { Guild } from "../models/guild";
 import { logger } from "../logger";
 
 import {
@@ -17,7 +20,6 @@ import {
   TextChannel,
   User,
   EmbedBuilder,
-  GuildMember,
 } from "discord.js";
 
 const client = new Client({
@@ -52,9 +54,19 @@ client.on("ready", async (c) => {
   console.log(logMessage);
   logger.info(logMessage);
 
-  let guildIds = c.guilds.cache.map((guild) => guild.id);
+  const guilds: Guild[] = [];
 
-  registerCommands(guildIds);
+  c.guilds.cache.map((g) => {
+    const guild: Guild = {
+      id: g.id,
+      owner: g.ownerId,
+    };
+    guilds.push(guild);
+  });
+
+  await registerCommands(guilds);
+  await setGuildOwners(guilds);
+  await setSpecialGuildAdmins(guilds);
 
   client.user?.setActivity({
     name: "Daco throw",
@@ -237,8 +249,6 @@ client.on("interactionCreate", async (interaction) => {
       });
     }
     default:
-      // const guildOwner = (await interaction.guild?.fetchOwner()) as GuildMember;
-      // console.log(guildOwner.user.id);
       break;
   }
 });
