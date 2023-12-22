@@ -14,7 +14,7 @@ export const getLeaderboard = async () => {
 
     (await User.find()).map((user) => {
       let userToAdd: internalUser = {
-        id: user.userId,
+        id: user.id,
         count: user.throwCount,
       };
 

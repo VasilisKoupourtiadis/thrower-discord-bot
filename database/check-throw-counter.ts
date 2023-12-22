@@ -13,7 +13,7 @@ export const checkThrowCounter = async (
   action: string
 ) => {
   const query = {
-    userId: userToCheck.id,
+    id: userToCheck.id,
   };
 
   let result: InternalResult;

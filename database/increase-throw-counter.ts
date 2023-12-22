@@ -8,7 +8,7 @@ export const increaseThrowCounter = async (
   action: string
 ) => {
   const query = {
-    userId: userThrowing.id,
+    id: userThrowing.id,
   };
 
   try {
@@ -25,7 +25,7 @@ export const increaseThrowCounter = async (
       });
     } else {
       const newUser = new User({
-        userId: userThrowing.id,
+        id: userThrowing.id,
         throwCount: 1,
       });
 

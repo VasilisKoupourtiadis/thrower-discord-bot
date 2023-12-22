@@ -10,7 +10,7 @@ export const resetUserThrowCount = async (
   action: string
 ) => {
   const query = {
-    userId: userToReset.id,
+    id: userToReset.id,
   };
 
   count = action === CommandNamesAndOptions.ThrowCount.valueOf();

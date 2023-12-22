@@ -1,7 +1,7 @@
 import { Schema, model } from "mongoose";
 
 const userSchema = new Schema({
-  userId: {
+  id: {
     type: String,
     required: true,
   },
@@ -12,6 +12,14 @@ const userSchema = new Schema({
   raidThrowCount: {
     type: Number,
     default: 0,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  isGuildOwner: {
+    type: Boolean,
+    default: false,
   },
 });
 
