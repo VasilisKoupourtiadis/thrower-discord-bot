@@ -4,28 +4,42 @@ import { logger } from "../logger";
 import { CommandNamesAndOptions } from "../enums/enums";
 
 let count: boolean;
+let userIsAdminOrGuildOwner: boolean;
 
 export const resetUserThrowCount = async (
   userToReset: discordUser,
-  action: string
+  action: string,
+  userWhoSentCommand: string
 ) => {
   const query = {
-    id: userToReset.id,
+    id: [userToReset.id, userWhoSentCommand],
   };
 
   count = action === CommandNamesAndOptions.ThrowCount.valueOf();
 
   try {
-    const user = await User.findOne(query);
+    const users = await User.find(query);
 
-    if (user) {
-      count ? (user.throwCount = 0) : (user.raidThrowCount = 0);
+    if (users) {
+      const resetUser = users.find((x) => x.id === userToReset.id);
+      const commandSentByUser = users.find((x) => x.id === userWhoSentCommand);
 
-      await user.save().catch((error) => {
-        logger.error("While trying to save changes to user:" + error);
-        return;
-      });
+      commandSentByUser?.isAdmin || commandSentByUser?.isGuildOwner
+        ? (userIsAdminOrGuildOwner = true)
+        : (userIsAdminOrGuildOwner = false);
+
+      if (userIsAdminOrGuildOwner && resetUser !== undefined) {
+        count ? (resetUser.throwCount = 0) : (resetUser.raidThrowCount = 0);
+        await resetUser.save().catch((error) => {
+          logger.error(
+            "While trying to save changes to user's throw count:" + error
+          );
+          return;
+        });
+      }
     }
+
+    return userIsAdminOrGuildOwner;
   } catch (error) {
     count
       ? logger.error("While trying to reset throw count:" + error)

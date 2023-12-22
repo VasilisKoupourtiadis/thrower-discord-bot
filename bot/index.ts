@@ -7,8 +7,8 @@ import { getLeaderboard } from "../database/get-leaderboard";
 import { resetUserThrowCount } from "../database/reset-user-throw-count";
 import { resetAllUserThrowCounters } from "../database/reset-all-user-throw-counters";
 import { registerCommands } from "./commands/register-commands";
-import { setGuildOwners } from "./functions/set-guild-owners";
-import { setSpecialGuildAdmins } from "./functions/set-special-guild-admins";
+import { setGuildOwners } from "../database/set-guild-owners";
+import { setSpecialGuildAdmins } from "../database/set-special-guild-admins";
 import { CommandNamesAndOptions, Channels } from "../enums/enums";
 import { Guild } from "../models/guild";
 import { logger } from "../logger";
@@ -201,37 +201,77 @@ client.on("interactionCreate", async (interaction) => {
         await interaction.reply({ embeds: [embed] });
       }
       break;
-    case CommandNamesAndOptions.Reset: {
-      const userToReset = interaction.options.get(
-        CommandNamesAndOptions.UserToBeReset
-      )?.user as User;
+    case CommandNamesAndOptions.Reset:
+      {
+        const userWhoSentCommand: string = interaction.user.id;
 
-      const counterToReset = interaction.options.get(
-        CommandNamesAndOptions.CounterToReset
-      )?.value as string;
+        const userToReset = interaction.options.get(
+          CommandNamesAndOptions.UserToBeReset
+        )?.user as User;
 
-      botReply =
-        counterToReset === CommandNamesAndOptions.ThrowCount.valueOf()
-          ? `Successfully reset ${userToReset.displayName}'s throw counter`
-          : `Successfully reset ${userToReset.displayName}'s raid throw counter`;
+        const counterToReset = interaction.options.get(
+          CommandNamesAndOptions.CounterToReset
+        )?.value as string;
 
-      if (!correctChannel) {
+        botReply =
+          counterToReset === CommandNamesAndOptions.ThrowCount.valueOf()
+            ? `Successfully reset ${userToReset.displayName}'s throw counter`
+            : `Successfully reset ${userToReset.displayName}'s raid throw counter`;
+
+        const userIsAdminOrGuildOwner = await resetUserThrowCount(
+          userToReset,
+          counterToReset,
+          userWhoSentCommand
+        );
+
+        console.log(userIsAdminOrGuildOwner);
+
+        if (
+          (!userIsAdminOrGuildOwner && !correctChannel) ||
+          (!userIsAdminOrGuildOwner && correctChannel)
+        ) {
+          await interaction.reply({
+            content:
+              "Sorry, this command is reserved for guild owners and admins",
+            ephemeral: true,
+          });
+
+          break;
+        } else if (userIsAdminOrGuildOwner && !correctChannel) {
+          await interaction.reply({
+            content:
+              "Sorry, you're not allowed to run commands in this channel",
+            ephemeral: true,
+          });
+
+          break;
+        }
+
         await interaction.reply({
-          content: "Sorry, you're not allowed to run commands in this channel",
+          content: botReply,
+          ephemeral: true,
+        });
+      }
+      break;
+    case CommandNamesAndOptions.ResetAll: {
+      const userWhoSentCommand: string = interaction.user.id;
+
+      const userIsAdminOrGuildOwner = await resetAllUserThrowCounters(
+        userWhoSentCommand
+      );
+
+      if (
+        (!userIsAdminOrGuildOwner && !correctChannel) ||
+        (!userIsAdminOrGuildOwner && correctChannel)
+      ) {
+        await interaction.reply({
+          content:
+            "Sorry, this command is reserved for guild owners and admins",
           ephemeral: true,
         });
 
         break;
-      }
-
-      await resetUserThrowCount(userToReset, counterToReset);
-      await interaction.reply({
-        content: botReply,
-        ephemeral: true,
-      });
-    }
-    case CommandNamesAndOptions.ResetAll: {
-      if (!correctChannel) {
+      } else if (userIsAdminOrGuildOwner && !correctChannel) {
         await interaction.reply({
           content: "Sorry, you're not allowed to run commands in this channel",
           ephemeral: true,
@@ -242,7 +282,6 @@ client.on("interactionCreate", async (interaction) => {
 
       botReply = `Successfully reset all user throw counters`;
 
-      await resetAllUserThrowCounters();
       await interaction.reply({
         content: botReply,
         ephemeral: true,

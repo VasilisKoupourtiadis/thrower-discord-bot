@@ -1,7 +1,7 @@
-import { User } from "../../models/user-schema";
-import { Guild } from "../../models/guild";
-import { dependencies } from "../dependencies";
-import { logger } from "../../logger";
+import { User } from "../models/user-schema";
+import { Guild } from "../models/guild";
+import { dependencies } from "../bot/dependencies";
+import { logger } from "../logger";
 
 export const setSpecialGuildAdmins = async (guilds: Guild[]) => {
   try {

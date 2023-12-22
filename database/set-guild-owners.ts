@@ -1,6 +1,6 @@
-import { User } from "../../models/user-schema";
-import { Guild } from "../../models/guild";
-import { logger } from "../../logger";
+import { User } from "../models/user-schema";
+import { Guild } from "../models/guild";
+import { logger } from "../logger";
 
 export const setGuildOwners = async (guilds: Guild[]) => {
   try {
