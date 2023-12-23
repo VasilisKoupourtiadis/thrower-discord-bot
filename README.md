@@ -11,7 +11,7 @@ This bot was specifically made with the latter scenario in mind. Since me and my
 
 #### Uses [MongoDB](https://www.mongodb.com/) for storing data
 
-#### Uses [Mongoose ODM](https://mongoosejs.com/) for writing queries to the database
+#### Uses [Mongoose ODM](https://mongoosejs.com/) for querying the database
 
 #### Written in [TypeSCript](https://www.typescriptlang.org/)
 
@@ -20,26 +20,22 @@ This bot was specifically made with the latter scenario in mind. Since me and my
 ## Commands
 
 ```
-/throwing @user
+/throwing @counter-to-update @user-throwing
 ```
 
-![Alt Text](https://i.imgur.com/5dFtn0C.png)
+Takes an option of either normal or raid counter which will be incremented as well as a Discord User Object. If the entity exists in the database, the subsequent counter is updated. If not, a new entity is added.
 
-Takes a discord User object as an argument and a counter is then updated and saved to the database for that user. Returns the following message.
-
-![Alt Text](https://i.imgur.com/ompMmkf.png)
+![Alt Text](https://i.imgur.com/dFfsQ2B.png)
 
 #
 
 ```
-/check @user
+/check @counter-to-check @user-to-be-checked
 ```
 
-![Alt Text](https://i.imgur.com/zz5TRxH.png)
+Takes an option of either normal or raid counter as well as a Discord User Object. If the entity does exist in the database, it is fetched regardless of the counter value (could be 0).
 
-Takes a discord User object as an argument and fetches the specific user information from the database. Returns the following message.
-
-![Alt Text](https://i.imgur.com/2p7RVKE.png)
+![Alt Text](https://i.imgur.com/7wGdM5X.png)
 
 #
 
@@ -47,52 +43,31 @@ Takes a discord User object as an argument and fetches the specific user informa
 /leaderboard
 ```
 
-![Alt Text](https://i.imgur.com/fdQHVw4.png)
+Takes no arguments and returns a emebed with list in descending order of the top 3 users that have the most registered throws in the server.
 
-Takes no arguments and returns a list in descending order of the top 3 users that have the most registered throws in the server.
+![Alt Text](https://i.imgur.com/DtMmrU0.png)
 
-![Alt Text](https://i.imgur.com/myuHsUq.png)
+#
 
-> [!NOTE]
-> Any and all blurred information is server-specific information, such as names and IDs, which I did not want to include in this showcase.
+```
+/reset @counter-to-reset @user-to-reset
+```
+
+Takes an option of either normal or raid counter as well as a Discord User Object. The subsequent user's counter will be reset. In order to run this command you either need to be a Guild Owner (the one who owns the server) or have administrator privileges.
+
+![Alt Text](https://i.imgur.com/Sx3FgNb.png)
+
+#
+
+```
+/reset-all
+```
+
+Takes no arguments. Basically purges your users counters and resets everything back to 0. In order to run this command you either need to be a Guild Owner (the one who owns the server) or have administrator privileges.
+
+![Alt Text](https://i.imgur.com/QzURdgV.png)
+
+#
 
 > [!IMPORTANT]
-> The bot is publicly available so you could techincally invite it to your server if you had an invite-link. However, since this bot's purpose was only to be used in our server, it is tightly coupled to it. If you however did want to download the bot and use it yourself, follow these steps.
-
-## Run Locally
-
-Clone the project
-
-```bash
-  git clone https://github.com/VasilisKoupourtiadis/thrower-discord-bot.git
-```
-
-Install dependencies
-
-```bash
-  npm i
-```
-
-Set the following environment variables
-
-`DISCORD_TOKEN` = Your secret bot token
-
-`GUILD_ID` = Discrod server id
-
-`CLIENT_ID` = Your bots id
-
-`CHANNEL_ID` = Primary channel bot posts to
-
-`CONNECTION_STRING` = MongoDB connection string
-
-Build the solution
-
-```bash
-  npm run build
-```
-
-Start the projet
-
-```bash
-  npm run dev
-```
+> The bot is publicly available so you could techincally invite it to your server if you had an invite-link. However, since this bot's purpose was only to be used in our server, it is tightly coupled to it and wouldn't function properly in another server.
